@@ -7,9 +7,14 @@ const validator = require('email-validator');
 const session = require('express-session');
 const { randomUUID } = require('node:crypto');
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const outputFile = require('./dokuSwagger.json');
 
 const app = express();
 const port = 3001;
+
+// Die dokuSwagger.json Datei wurde von ChatGPT generiert
+app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(outputFile));
 
 // generated von ChatGPT
 let tasks = [
@@ -143,7 +148,7 @@ app.delete('/tasks/:id', authenticate, (request, response) => {
 
   if (id in tasks) {
     tasks = tasks.filter((task) => String(task.id) !== id);
-    response.send(tasks);
+    response.status(204).send(tasks);
   } else {
     return response.status(404).send('Bitte geben sie eine gültige ID ein');
   }
