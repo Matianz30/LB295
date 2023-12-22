@@ -1,7 +1,10 @@
+// Den email validator habe ich von Leon bekommen und auch selber im internet dazu recherchiert
+const validator = require("email-validator");
+const session = require('express-session');
 const { randomUUID } = require('node:crypto');
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 3001;
 
 //generated von ChatGPT
 let tasks = [
@@ -17,16 +20,59 @@ let tasks = [
     { id: 10, Titel: "Kochen lernen", Autor: "David Schmidt", Erstellungsdatum: "05.03.2023", Erfüllungsdatum: "07.03.2023" }
   ];
   
-
+// Middle wares
 app.use(express.json())
 
+app.use(session({
+  secret: 'supersecret',
+	resave: false,
+	saveUninitialized: false,
+  cookie: {}
+}))
 
+// auth email und passwort
+const loginInfo = { email: "beispiel@email.com", password: "m295" }
+
+// Authentifizierung für tasks Endpunkte
+// Hierfür habe ich die gestrigen aufgaben als referenz benutzt
+app.post('/login', function (request, response) {
+	const { email, password } = request.body
+
+  if(validator.validate(request.body.email) === true){
+	if (password == loginInfo.password) {
+		request.session.email = email
+
+		return response.status(200).json({ email: request.session.email })
+	}
+  return response.status(401).json({error: "Bitte gib ein gültiges Login ein"})
+} else {
+  return response.status(401).json({error: "Bitte gib eine gültige Email ein"})
+}})
+
+app.get('/verify', function (request, response) {
+  const email = request.session.email
+	if (email) {
+		return response.status(200).json({ email: email })
+  }
+  return response.status(401).json({ error: "Nicht eingeloggt" })
+})
+
+app.delete('/logout', function (request, response) {
+	if (request.session.email) {
+		request.session.email = null
+		return response.status(204).json({ logout: "Ausgelogged"})
+	}
+  return response.status(401).json({ error: "Noch nicht eingelogged" })
+})
+
+
+// tasks Endpunkte
 app.get('/tasks', (request,response) => {
     response.status(200).send(tasks);
 });
 
 app.get('/tasks/:id', (request, response) => {
-  const taskId = parseInt(request.params.id);
+  const taskId = request.params.id;
 
   if(taskId in tasks){
   response.send(tasks.find(task => task.id === taskId ))
@@ -44,7 +90,7 @@ app.post('/tasks', (request, response) => {
   });
 
 
-//Es hatte einen Syntax fehler ich habe ihn nicht gefunden dann habe ich ihn von ChatGPT korrigieren lassen und dann gesehen das es einen Fehler mit Task.id gab und request.params.id
+// Es hatte einen Syntax fehler ich habe ihn nicht gefunden dann habe ich ihn von ChatGPT korrigieren lassen und dann gesehen das es einen Fehler mit Task.id gab und request.params.id
 app.patch('/tasks/:id', (request, response) => {
   const keys = Object.keys(request.body);
   const id = request.params.id
@@ -59,6 +105,7 @@ app.patch('/tasks/:id', (request, response) => {
   }
 });
 
+// Hier hatte ich wieder den gleichen Syntax fehler wie vorhin und habe ihn dann behoben
 app.delete('/tasks/:id', (request, response) => {
   const id = request.params.id
 
