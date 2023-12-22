@@ -65,13 +65,22 @@ app.delete('/logout', function (request, response) {
   return response.status(401).json({ error: "Noch nicht eingelogged" })
 })
 
+// Diese Funktion hab eich vom Internet, aber ich hbae sie überarbeitet sodass sie funktioniert und in allen endpunkten gesetzt
+const authenticate = (request, response, next) => {
+  if (request.session.email) {
+    next();
+  } else {
+    response.status(401).json({ error: "Nicht Eingelogged" });
+  }
+};
+
 
 // tasks Endpunkte
-app.get('/tasks', (request,response) => {
+app.get('/tasks', authenticate, (request,response) => {
     response.status(200).send(tasks);
 });
 
-app.get('/tasks/:id', (request, response) => {
+app.get('/tasks/:id', authenticate, (request, response) => {
   const taskId = request.params.id;
 
   if(taskId in tasks){
@@ -81,7 +90,7 @@ app.get('/tasks/:id', (request, response) => {
   }
 });
 
-app.post('/tasks', (request, response) => {
+app.post('/tasks', authenticate, (request, response) => {
   const newTask = request.body;
   newTask['id'] = randomUUID();
 
@@ -91,7 +100,7 @@ app.post('/tasks', (request, response) => {
 
 
 // Es hatte einen Syntax fehler ich habe ihn nicht gefunden dann habe ich ihn von ChatGPT korrigieren lassen und dann gesehen das es einen Fehler mit Task.id gab und request.params.id
-app.patch('/tasks/:id', (request, response) => {
+app.patch('/tasks/:id', authenticate, (request, response) => {
   const keys = Object.keys(request.body);
   const id = request.params.id
 
@@ -106,7 +115,7 @@ app.patch('/tasks/:id', (request, response) => {
 });
 
 // Hier hatte ich wieder den gleichen Syntax fehler wie vorhin und habe ihn dann behoben
-app.delete('/tasks/:id', (request, response) => {
+app.delete('/tasks/:id', authenticate, (request, response) => {
   const id = request.params.id
 
   if(id in tasks){
