@@ -1,0 +1,29 @@
+commit fe606fa64e4bad3159aea0a407a3f39942f63aea
+Author: Matian Dauti <naitam08@outlook.com>
+Date:   Fri Dec 22 12:23:31 2023 +0000
+
+    chore: Authentication überarbeitet und gefixed
+
+commit 03e27ce8abcef7be377c484fa72a604fcdfb7064
+Author: Matian Dauti <naitam08@outlook.com>
+Date:   Fri Dec 22 12:17:59 2023 +0000
+
+    chore: Authentication fertig
+
+commit 3a8f3616d51bad3af67125fe59d207469a727608
+Author: Matian Dauti <naitam08@outlook.com>
+Date:   Fri Dec 22 10:05:34 2023 +0000
+
+    chore: Hauptanforderungen Fertig
+
+commit db4062745dab4f8646d52be0538111419113fc43
+Author: Matian Dauti <naitam08@outlook.com>
+Date:   Fri Dec 22 09:01:31 2023 +0100
+
+    chore: .gitignore, server.js
+
+commit deab8b5daaa6eff912afaa571f82e522ad44778c
+Author: Matian Dauti <naitam08@outlook.com>
+Date:   Fri Dec 22 08:44:58 2023 +0100
+
+    first commit
